@@ -14,6 +14,7 @@ WINDOW_WIDTH , WINDOW_HEIGHT = 1280, 720
 display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Asteroid Shooter")
 clock = pygame.time.Clock()
+is_game_running = False
 
 # importing images # # # # # # # # # # # # # # # # # # #
 ship_surface = pygame.image.load("ressources/graphics/ship.png").convert_alpha()
@@ -24,8 +25,11 @@ laser_list = []
 
 # import text # # # # # # # # # # # # # # # # # # # 
 font = pygame.font.Font("ressources/graphics/subatomic.ttf", 50)
-text_surface = font.render("Space Boi", True, "White")
-text_rect = text_surface.get_rect(midtop = (640, 200))
+font_score = pygame.font.Font("ressources/graphics/subatomic.ttf", 30)
+title_surface = font.render("Space Boi", True, "White")
+title_rect = title_surface.get_rect(midtop = (640, 150))
+score_surface = font_score.render("Score: ", True, "White")
+score_rect = score_surface.get_rect(midtop = (120, WINDOW_HEIGHT - 60))
 
 # Game Loop # # # # # # # # # # # # # # # # # # # 
 while True:
@@ -35,6 +39,7 @@ while True:
             sys.exit()
         
         if event.type == pygame.MOUSEBUTTONDOWN:
+            is_game_running = True
             laser_rect = laser_surface.get_rect(midbottom = ship_rect.midtop)
             laser_list.append(laser_rect)
     
@@ -50,13 +55,14 @@ while True:
     display_surface.fill((100, 100, 100))
     display_surface.blit(background, (0, 0))
     display_surface.blit(ship_surface, ship_rect)
+    display_surface.blit(score_surface, score_rect)
 
     for laser in laser_list:
         display_surface.blit(laser_surface, laser)
-    display_surface.blit(text_surface, text_rect)
     
-    # rect drawing
-    pygame.draw.rect(display_surface, "white", text_rect.inflate(50, 30), width = 5, border_radius = 2)
+    if not is_game_running:
+        display_surface.blit(title_surface, title_rect)
+        pygame.draw.rect(display_surface, "white", title_rect.inflate(50, 30), width = 5, border_radius = 2)
     
     # show Frame to Player -> update display_surface
     pygame.display.update()
