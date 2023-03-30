@@ -48,7 +48,6 @@ asteroid_surface = pygame.image.load("ressources/graphics/meteor.png").convert_a
 laser_list = []
 asteroid_list = []
 
-
 # laser timer # # # # # # # # # # # # # # # # # # #
 can_shoot = True
 laser_time = None
@@ -59,10 +58,15 @@ font_score = pygame.font.Font("ressources/graphics/subatomic.ttf", 30)
 title_surface = font.render("Space Boi", True, "White")
 title_rect = title_surface.get_rect(midtop = (640, 150))
 
-
 # meteor_timer
 meteor_timer = pygame.event.custom_type()
 pygame.time.set_timer(meteor_timer, 2000)
+
+# import sound
+laser_sound = pygame.mixer.Sound("ressources/sounds/laser.ogg")
+destroy_sound = pygame.mixer.Sound("ressources/sounds/explosion.wav")
+background_music = pygame.mixer.Sound("ressources/sounds/music.wav")
+background_music.play(loops = -1)
 
 # Game Loop # # # # # # # # # # # # # # # # # # # 
 while True:
@@ -75,6 +79,7 @@ while True:
             is_game_running = True
             laser_rect = laser_surface.get_rect(midbottom = ship_rect.midtop)
             laser_list.append(laser_rect)
+            laser_sound.play()
             
             # timer
             can_shoot = False
@@ -102,6 +107,22 @@ while True:
     laser_update(laser_list)
     asteroid_update(asteroid_list)
     can_shoot = laser_timer(can_shoot, 400)
+    
+    # asteroid shipp collisions
+    for asteroid_tuple in asteroid_list:
+        rect = asteroid_tuple[0]
+        if ship_rect.colliderect(rect):
+            pygame.quit()
+            sys.exit()
+    
+    # laser asteroid collision
+    for asteroid_tuple in asteroid_list:
+        asteroid_rect = asteroid_tuple[0]
+        for laser in laser_list:
+            if laser.colliderect(asteroid_rect):
+                asteroid_list.remove(asteroid_tuple)
+                laser_list.remove(laser)
+                destroy_sound.play()
     
     display_surface.fill((100, 100, 100))
     display_surface.blit(background, (0, 0))
