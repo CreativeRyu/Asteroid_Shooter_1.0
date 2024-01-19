@@ -126,7 +126,8 @@ while True:
     
     display_surface.fill((100, 100, 100))
     display_surface.blit(background, (0, 0))
-    display_surface.blit(ship_surface, ship_rect)
+    ship_position = ship_rect
+    display_surface.blit(ship_surface, ship_position)
     display_score()
     
     for laser in laser_list:
